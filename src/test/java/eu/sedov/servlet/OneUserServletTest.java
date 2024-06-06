@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @ExtendWith(MockitoExtension.class)
-class UserServletTest {
+class OneUserServletTest {
     static String path = "/user";
 
     @InjectMocks

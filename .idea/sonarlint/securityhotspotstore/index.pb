@@ -56,3 +56,13 @@ G.idea/sonarlint/issuestore/a/1/a15852150b1eb576d35094f69c953c3c46fd3041,e\8\e8
 Q.idea/sonarlint/securityhotspotstore/4/4/442292b8a7efeabbe4cc176709b833b1792140ec,2\c\2cabb939da04d3de3a200bf2b575690e1a16316d
 Å
 Q.idea/sonarlint/securityhotspotstore/a/1/a15852150b1eb576d35094f69c953c3c46fd3041,8\7\876bfbb0a7e94d25a511590937cebaeb8016e4b2
+f
+6src/test/java/eu/sedov/servlet/OneUserServletTest.java,a\9\a9f0b39500cb6307c49af5424b60ec73ad266110
+e
+5src/main/java/eu/sedov/servlet/UpdateUserServlet.java,d\7\d7a01e99ad3364b5227dfb64de47848f095ab4e5
+e
+5src/main/java/eu/sedov/servlet/DeleteUserServlet.java,a\d\addb31a4631ad815d0106ce9838a96e3669cb180
+i
+9src/test/java/eu/sedov/servlet/DeleteUserServletTest.java,7\d\7daec25dae15255538b2de3a72ff792b2192d0bf
+i
+9src/test/java/eu/sedov/servlet/UpdateUserServletTest.java,9\d\9d56784aa3dfc1f84a6fc6774fb250f032afc524
