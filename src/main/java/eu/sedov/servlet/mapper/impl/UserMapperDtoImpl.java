@@ -15,7 +15,6 @@ public class UserMapperDtoImpl implements UserMapperDto {
                 incomingDto.address()
         );
     }
-
     @Override
     public OutUserDTO map(User entity) {
         return new OutUserDTO(

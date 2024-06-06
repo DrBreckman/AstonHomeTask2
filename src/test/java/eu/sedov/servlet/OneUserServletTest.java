@@ -2,7 +2,7 @@ package eu.sedov.servlet;
 
 import eu.sedov.model.User;
 import eu.sedov.repository.mapper.impl.UserEnumMap;
-import eu.sedov.service.impl.UserServiceImpl;
+import eu.sedov.service.impl.LibraryUserServiceImpl;
 import eu.sedov.servlet.dto.InUserDTO;
 import eu.sedov.servlet.dto.OutUserDTO;
 import eu.sedov.servlet.mapper.impl.UserMapperDtoImpl;
@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +26,7 @@ class OneUserServletTest {
     static OneUserServlet servlet;
 
     @Mock
-    static UserServiceImpl service;
+    static LibraryUserServiceImpl service;
     @Mock
     static UserMapperDtoImpl mapper;
     @Mock
@@ -42,6 +41,7 @@ class OneUserServletTest {
         final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
         final RequestDispatcher dispatcher = Mockito.mock(RequestDispatcher.class);
 
+        Mockito.when(userEnum.getMap()).thenReturn(new UserEnumMap().getMap());
         Mockito.when(request.getParameter("id")).thenReturn("1");
         Mockito.when(service.getById(1)).thenReturn(user);
         Mockito.when(mapper.map(user)).thenReturn(dto);
@@ -64,6 +64,7 @@ class OneUserServletTest {
         final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
         final RequestDispatcher dispatcher = Mockito.mock(RequestDispatcher.class);
 
+        Mockito.when(userEnum.getMap()).thenReturn(new UserEnumMap().getMap());
         Mockito.when(request.getRequestDispatcher(path)).thenReturn(dispatcher);
         Mockito.when(request.getParameter("id")).thenReturn(String.valueOf(user.getId()));
         Mockito.when(request.getParameter("name")).thenReturn(user.getName());
@@ -75,7 +76,7 @@ class OneUserServletTest {
 
         servlet.doPost(request, response);
 
-        Mockito.verify(request, Mockito.times(1)).getRequestDispatcher("/user");
+        Mockito.verify(request, Mockito.times(1)).getRequestDispatcher(path);
         Mockito.verify(request, Mockito.never()).getSession();
         Mockito.verify(dispatcher).forward(request, response);
     }

@@ -2,7 +2,7 @@ package eu.sedov.servlet;
 
 import eu.sedov.model.User;
 import eu.sedov.repository.mapper.impl.UserEnumMap;
-import eu.sedov.service.impl.UserServiceImpl;
+import eu.sedov.service.impl.LibraryUserServiceImpl;
 import eu.sedov.servlet.dto.OutUserDTO;
 import eu.sedov.servlet.mapper.impl.UserMapperDtoImpl;
 import org.junit.jupiter.api.Test;
@@ -11,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,12 +20,12 @@ import java.io.IOException;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteUserServletTest {
-
+    static String path = "/delete";
     @InjectMocks
     private DeleteUserServlet servlet;
 
     @Mock
-    private UserServiceImpl service;
+    private LibraryUserServiceImpl service;
     @Mock
     private UserMapperDtoImpl mapper;
     @Mock
@@ -41,15 +40,16 @@ class DeleteUserServletTest {
         final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
         final RequestDispatcher dispatcher = Mockito.mock(RequestDispatcher.class);
 
+        Mockito.when(userEnum.getMap()).thenReturn(new UserEnumMap().getMap());
         Mockito.when(request.getParameter("id")).thenReturn("1");
         Mockito.when(service.getById(1)).thenReturn(user);
         Mockito.when(service.delete(1)).thenReturn(1);
         Mockito.when(mapper.map(user)).thenReturn(dto);
-        Mockito.when(request.getRequestDispatcher("/delete")).thenReturn(dispatcher);
+        Mockito.when(request.getRequestDispatcher(path)).thenReturn(dispatcher);
 
         servlet.doPost(request, response);
 
-        Mockito.verify(request, Mockito.times(1)).getRequestDispatcher("/delete");
+        Mockito.verify(request, Mockito.times(1)).getRequestDispatcher(path);
         Mockito.verify(request, Mockito.never()).getSession();
         Mockito.verify(dispatcher).forward(request, response);
     }

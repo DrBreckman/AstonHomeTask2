@@ -1,142 +1,87 @@
 package eu.sedov.repository.impl;
 
+import eu.sedov.dao.EntityDAO;
 import eu.sedov.db.ConnectionManager;
 import eu.sedov.model.User;
-import eu.sedov.repository.UserRepository;
-import eu.sedov.repository.mapper.UserResultSetMapper;
+
+import eu.sedov.model.UserBook;
+import eu.sedov.model.UserReview;
+import eu.sedov.repository.EntityRepositoryClass;
+import eu.sedov.repository.mapper.EntityResultSetMapper;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.*;
 
-public class UserRepositoryImpl implements UserRepository {
-    private final UserResultSetMapper mapper;
-    private final ConnectionManager manager;
-
-    public UserRepositoryImpl(UserResultSetMapper mapper, ConnectionManager manager){
-        this.mapper = mapper;
-        this.manager = manager;
-        createTableIfNotExist();
+public class UserRepositoryImpl extends EntityRepositoryClass<User> {
+    public UserRepositoryImpl(EntityResultSetMapper<User> mapper, ConnectionManager manager, EntityDAO dao) {
+        super(mapper, manager, dao);
     }
 
-    private void createTableIfNotExist(){
-        try (Connection conn = this.manager.getConnection()) {
-            try (PreparedStatement statement = conn.prepareStatement("""
-                    CREATE TABLE IF NOT EXISTS user (
-                    `id` INT NOT NULL AUTO_INCREMENT,
-                    `name` VARCHAR(45) NOT NULL,
-                    `age` INT NOT NULL,
-                    `address` VARCHAR(45) NOT NULL,
-                    PRIMARY KEY (`id`),
-                    UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
-                """
-                )
-            ){
-                statement.execute();
-            }
-        } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public List<User> getAll() {
-        List<User> users = new ArrayList<>();
+    public List<UserBook> getUsersBooks(){
+        List<UserBook> userBooks = new ArrayList<>();
         try (Connection conn = manager.getConnection()){
             try(PreparedStatement statement = conn.prepareStatement("""
-                  SELECT user.id, user.name, user.age, user.address
-                  FROM user;
-               """
-                )
+                    SELECT ticket.idUser, ticket.idBook
+                    FROM ticket
+                """)
             ){
                 ResultSet resultSet = statement.executeQuery();
                 while(resultSet.next()){
-                    users.add(mapper.map(resultSet));
+                    userBooks.add(new UserBook(
+                            resultSet.getInt(1),
+                            resultSet.getInt(2)
+                    ));
                 }
             }
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
         }
-        return users;
+        return userBooks;
     }
 
-    @Override
-    public User get(int id) {
-        User user = null;
+    public List<UserReview> getUsersReview(){
+        List<UserReview> userReviews = new ArrayList<>();
         try (Connection conn = manager.getConnection()){
-            try(PreparedStatement preparedStatement = conn.prepareStatement("""
-                        SELECT user.id, user.name, user.age, user.address
-                        FROM user
-                        WHERE id = ?
-                    """)
+            try(PreparedStatement statement = conn.prepareStatement("""
+                    SELECT user.id, review.id
+                    FROM review
+                    INNER JOIN user ON review.userId = user.id
+                """)
             ){
-                preparedStatement.setInt(1, id);
-                ResultSet resultSet = preparedStatement.executeQuery();
-                if(resultSet.next()){
-                    user = mapper.map(resultSet);
+                ResultSet resultSet = statement.executeQuery();
+                while(resultSet.next()){
+                    userReviews.add(new UserReview(
+                            resultSet.getInt(1),
+                            resultSet.getInt(2)
+                    ));
                 }
             }
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
         }
-        return user;
+        return userReviews;
     }
 
     @Override
-    public int delete(int id) {
-        try (Connection conn = manager.getConnection()){
-            try(PreparedStatement preparedStatement = conn.prepareStatement("""
-                        DELETE FROM user
-                        WHERE id = ?
-                    """)
-            ){
-                preparedStatement.setInt(1, id);
-                return  preparedStatement.executeUpdate();
-            }
-        } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
-        }
+    protected PreparedStatement updatePreparedStatementSet(PreparedStatement state, User entity) throws SQLException {
+        state.setString(1, entity.getName());
+        state.setInt(2, entity.getAge());
+        state.setString(3, entity.getAddress());
+        state.setInt(4, entity.getId());
+        return state;
     }
 
     @Override
-    public int update(User user) {
-        try (Connection conn = manager.getConnection()){
-            try(PreparedStatement preparedStatement = conn.prepareStatement("""
-                        UPDATE user
-                        SET name = ?, age = ?, address = ?
-                        WHERE id = ?
-                    """)
-            ){
-                preparedStatement.setString(1, user.getName());
-                preparedStatement.setInt(2, user.getAge());
-                preparedStatement.setString(3, user.getAddress());
-                preparedStatement.setInt(4, user.getId());
-                return  preparedStatement.executeUpdate();
-            }
-        } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
-        }
+    protected PreparedStatement insertPreparedStatementSet(PreparedStatement state, User entity) throws SQLException {
+        state.setString(1, entity.getName());
+        state.setInt(2, entity.getAge());
+        state.setString(3, entity.getAddress());
+        return state;
     }
 
 
-    @Override
-    public int insert(User user) {
-        try (Connection conn = manager.getConnection()){
-            try(PreparedStatement preparedStatement = conn.prepareStatement("""
-                        INSERT INTO user (name, age, address)
-                        Values (?, ?, ?)
-                    """)
-            ){
-                preparedStatement.setString(1, user.getName());
-                preparedStatement.setInt(2, user.getAge());
-                preparedStatement.setString(3, user.getAddress());
-                return  preparedStatement.executeUpdate();
-            }
-        } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

@@ -1,16 +1,13 @@
 package eu.sedov.repository.impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.sedov.dao.impl.UserDAO;
 import eu.sedov.db.ConnectionManager;
 import eu.sedov.db.impl.ConnectionSQL;
 import eu.sedov.model.User;
-import eu.sedov.repository.UserRepository;
+import eu.sedov.repository.EntityRepositoryClass;
 import eu.sedov.repository.mapper.impl.UserResultSetMapperImpl;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.MySQLContainer;
@@ -18,7 +15,7 @@ import org.testcontainers.containers.MySQLContainer;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserRepositoryImplTest {
-    private UserRepository repository;
+    private EntityRepositoryClass<User> repository;
 
     static MySQLContainer<?> mySQLcontainer = new MySQLContainer<>(
             "mysql:8.4.0-oracle"
@@ -41,7 +38,7 @@ class UserRepositoryImplTest {
                 mySQLcontainer.getUsername(),
                 mySQLcontainer.getPassword()
         );
-        repository = new UserRepositoryImpl(new UserResultSetMapperImpl(), connectionManager);
+        repository = new UserRepositoryImpl(new UserResultSetMapperImpl(), connectionManager, new UserDAO());
     }
 
     @Test

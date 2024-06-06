@@ -1,10 +1,8 @@
-package eu.sedov.repository.impl;
+package eu.sedov.repository;
 
 import eu.sedov.dao.EntityDAO;
 import eu.sedov.db.ConnectionManager;
-import eu.sedov.model.User;
 import eu.sedov.repository.mapper.EntityResultSetMapper;
-import eu.sedov.repository.mapper.UserResultSetMapper;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -14,13 +12,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class EntityRepository<T> implements eu.sedov.repository.EntityRepository<T> {
+public abstract class EntityRepositoryClass<T> implements eu.sedov.repository.EntityRepository<T> {
 
-    private final EntityResultSetMapper<T> mapper;
-    private final ConnectionManager manager;
-    private final EntityDAO dao;
+    protected final EntityResultSetMapper<T> mapper;
+    protected final ConnectionManager manager;
+    protected final EntityDAO dao;
 
-    protected EntityRepository(EntityResultSetMapper<T> mapper, ConnectionManager manager, EntityDAO dao){
+    protected EntityRepositoryClass(EntityResultSetMapper<T> mapper, ConnectionManager manager, EntityDAO dao){
         this.mapper = mapper;
         this.manager = manager;
         this.dao = dao;
@@ -56,7 +54,10 @@ public abstract class EntityRepository<T> implements eu.sedov.repository.EntityR
     }
 
     @Override
-    public T get(int id) {
+    public T get(Integer id) {
+        if (id == null)
+            return null;
+
         T entity = null;
         try (Connection conn = manager.getConnection()){
             try(PreparedStatement preparedStatement = conn.prepareStatement(dao.getById())
@@ -74,7 +75,10 @@ public abstract class EntityRepository<T> implements eu.sedov.repository.EntityR
     }
 
     @Override
-    public int delete(int id) {
+    public int delete(Integer id) {
+        if (id == null)
+            return 0;
+
         try (Connection conn = manager.getConnection()){
             try(PreparedStatement preparedStatement = conn.prepareStatement(dao.delete())
             ){
@@ -91,12 +95,7 @@ public abstract class EntityRepository<T> implements eu.sedov.repository.EntityR
         try (Connection conn = manager.getConnection()){
             try(PreparedStatement preparedStatement = conn.prepareStatement(dao.update())
             ){
-                return updatePreparedStatementSet(preparedStatement).executeUpdate();
-               /* preparedStatement.setString(1, entity.getName());
-                preparedStatement.setInt(2, entity.getAge());
-                preparedStatement.setString(3, entity.getAddress());
-                preparedStatement.setInt(4, entity.getId());
-                return  preparedStatement.executeUpdate();*/
+                return updatePreparedStatementSet(preparedStatement, entity).executeUpdate();
             }
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
@@ -107,19 +106,15 @@ public abstract class EntityRepository<T> implements eu.sedov.repository.EntityR
         try (Connection conn = manager.getConnection()){
             try(PreparedStatement preparedStatement = conn.prepareStatement(dao.insert())
             ){
-                return insertPreparedStatementSet(preparedStatement).executeUpdate();
-                /*preparedStatement.setString(1, entity.getName());
-                preparedStatement.setInt(2, entity.getAge());
-                preparedStatement.setString(3, entity.getAddress());
-                return  preparedStatement.executeUpdate();*/
+                return insertPreparedStatementSet(preparedStatement, entity).executeUpdate();
             }
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    protected abstract PreparedStatement updatePreparedStatementSet(PreparedStatement state);
-    protected abstract PreparedStatement insertPreparedStatementSet(PreparedStatement state);
+    protected abstract PreparedStatement updatePreparedStatementSet(PreparedStatement state, T entity) throws SQLException;
+    protected abstract PreparedStatement insertPreparedStatementSet(PreparedStatement state, T entity) throws SQLException;
 
 
 }

@@ -2,7 +2,7 @@ package eu.sedov.servlet;
 
 import eu.sedov.model.User;
 import eu.sedov.repository.mapper.impl.UserEnumMap;
-import eu.sedov.service.UserService;
+import eu.sedov.service.LibraryUserService;
 import eu.sedov.servlet.dto.InUserDTO;
 import eu.sedov.servlet.dto.OutUserDTO;
 import eu.sedov.servlet.mapper.UserMapperDto;
@@ -16,31 +16,46 @@ import java.io.IOException;
 
 @WebServlet("/user")
 public class OneUserServlet extends HttpServlet {
-    private UserService service;
+    private LibraryUserService service;
     private UserMapperDto mapper;
     private UserEnumMap map;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        final User user = service.getById(Integer.parseInt(req.getParameter(map.getMap().get(UserEnumMap.UserResultSetParams.ID))));
-        final OutUserDTO dto = mapper.map(user);
+        String stringId = req.getParameter(map.getMap().get(UserEnumMap.UserResultSetParams.ID));
+        if (stringId != null){
+            Integer id = Integer.parseInt(stringId);
+            final User user = service.getById(id);
 
-        req.setAttribute("user", dto);
+            if (user != null){
+                final OutUserDTO dto = mapper.map(user);
+                req.setAttribute("user", dto);
+            }
+        }
+
         req.getRequestDispatcher("/user").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        InUserDTO incomingDTO = new InUserDTO(
-                Integer.parseInt(req.getParameter(map.getMap().get(UserEnumMap.UserResultSetParams.ID))),
-                req.getParameter(map.getMap().get(UserEnumMap.UserResultSetParams.ID)),
-                Integer.parseInt(req.getParameter(map.getMap().get(UserEnumMap.UserResultSetParams.ID))),
-                req.getParameter(map.getMap().get(UserEnumMap.UserResultSetParams.ID)));
-        User user = mapper.map(incomingDTO);
-        service.insert(user);
-        OutUserDTO outGoingDto = mapper.map(user);
+        String stringId = req.getParameter(map.getMap().get(UserEnumMap.UserResultSetParams.ID));
+        String stringName = req.getParameter(map.getMap().get(UserEnumMap.UserResultSetParams.NAME));
+        String stringAge = req.getParameter(map.getMap().get(UserEnumMap.UserResultSetParams.AGE));
+        String stringAddress = req.getParameter(map.getMap().get(UserEnumMap.UserResultSetParams.ADDRESS));
 
-        req.setAttribute("addedUser", outGoingDto);
+        if (stringId != null){
+            InUserDTO incomingDTO = new InUserDTO(
+                    Integer.parseInt(stringId),
+                    stringName,
+                    stringAge == null ? null : Integer.parseInt(stringAge),
+                    stringAddress
+            );
+
+            User user = mapper.map(incomingDTO);
+            service.insert(user);
+            OutUserDTO outGoingDto = mapper.map(user);
+            req.setAttribute("addedUser", outGoingDto);
+        }
         req.getRequestDispatcher("/user").forward(req, resp);
     }
 }

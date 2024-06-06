@@ -4,12 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class User {
-    private final int id;
+    private final Integer id;
     private String name;
-    private int age;
+    private Integer age;
     private String address;
-    private final List<Review> reviewList = new ArrayList<>();
-    private final List<Book> bookList = new ArrayList<>();
+    private List<Review> reviewList = new ArrayList<>();
+    private List<Book> bookList = new ArrayList<>();
+
+    public void setReviewList(List<Review> reviewList) {
+        this.reviewList = reviewList;
+    }
+
+    public void setBookList(List<Book> bookList) {
+        this.bookList = bookList;
+    }
 
     public List<Review> getReviewList() {
         return reviewList;
@@ -19,7 +27,7 @@ public final class User {
         return bookList;
     }
 
-    public int getId(){
+    public Integer getId(){
         return id;
     }
     public String getName(){
@@ -28,10 +36,10 @@ public final class User {
     public void setName(String name){
         this.name = name;
     }
-    public int getAge(){
+    public Integer getAge(){
         return age;
     }
-    public void setAge(int age){
+    public void setAge(Integer age){
         this.age = age;
     }
     public String getAddress(){
@@ -41,7 +49,7 @@ public final class User {
         this.address = address;
     }
 
-    public User(int id, String name, int age, String address){
+    public User(Integer id, String name, Integer age, String address){
         this.id = id;
         this.name = name;
         this.age = age;
@@ -53,13 +61,13 @@ public final class User {
         if (!(obj instanceof User user))
             return false;
 
-        if (this.id != user.id)
+        if (!this.id.equals(user.id))
             return false;
 
         if (!this.name.equals(user.name))
             return false;
 
-        if (this.age != user.age)
+        if (!this.age.equals(user.age))
             return false;
 
         return this.address.equals(user.address);

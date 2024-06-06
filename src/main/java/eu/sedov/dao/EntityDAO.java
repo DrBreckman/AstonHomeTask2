@@ -7,5 +7,4 @@ public interface EntityDAO {
     String insert();
     String delete();
     String update();
-
 }

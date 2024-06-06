@@ -1,9 +1,8 @@
 package eu.sedov.model;
 
 public class Review {
-
-    private final int id;
-    private int mark;
+    private final Integer id;
+    private Integer mark;
     private String description;
     private User user;
 
@@ -13,28 +12,17 @@ public class Review {
     public void setUser(User user) {
         this.user = user;
     }
-
-    public int getId() {
+    public Integer getId() {
         return id;
     }
-
-    public int getMark() {
+    public Integer getMark() {
         return mark;
     }
-
-    public void setMark(int mark) {
-        this.mark = mark;
-    }
-
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Review(int id, int mark, String description) {
+    public Review(Integer id, Integer mark, String description) {
         this.id = id;
         this.mark = mark;
         this.description = description;

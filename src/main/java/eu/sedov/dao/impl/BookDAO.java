@@ -2,33 +2,32 @@ package eu.sedov.dao.impl;
 
 import eu.sedov.dao.EntityDAO;
 
-public class UserDAO implements EntityDAO {
+public class BookDAO implements EntityDAO {
     @Override
     public String createTableIfNotExist() {
         return """
-            CREATE TABLE IF NOT EXISTS user (
-            `id` INT NOT NULL AUTO_INCREMENT,
-            `name` VARCHAR(45),
-            `age` INT,
-            `address` VARCHAR(45),
+            CREATE TABLE IF NOT EXISTS book (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `name` varchar(45),
+            `author` varchar(45),
             PRIMARY KEY (`id`),
-            UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
+            UNIQUE KEY `id_UNIQUE` (`id`) );
         """;
     }
 
     @Override
     public String getAll() {
         return """
-            SELECT user.id, user.name, user.age, user.address
-            FROM user;
+            SELECT book.id, book.name, book.author
+            FROM book;
         """;
     }
 
     @Override
     public String getById() {
         return """
-            SELECT user.id, user.name, user.age, user.address
-            FROM user
+            SELECT book.id, book.name, book.author
+            FROM book
             WHERE id = ?
         """;
     }
@@ -36,15 +35,15 @@ public class UserDAO implements EntityDAO {
     @Override
     public String insert() {
         return """
-            INSERT INTO user (name, age, address)
-            Values (?, ?, ?)
+            INSERT INTO book (name, author)
+            Values (?, ?)
         """;
     }
 
     @Override
     public String delete() {
         return """
-            DELETE FROM user
+            DELETE FROM book
             WHERE id = ?
         """;
     }
@@ -52,8 +51,8 @@ public class UserDAO implements EntityDAO {
     @Override
     public String update() {
         return """
-            UPDATE user
-            SET name = ?, age = ?, address = ?
+            UPDATE book
+            SET name = ?, author = ?
             WHERE id = ?
         """;
     }

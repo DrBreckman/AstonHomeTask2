@@ -1,9 +1,11 @@
 package eu.sedov.repository.mapper.impl;
 
+import eu.sedov.dao.EntityDAO;
+import eu.sedov.dao.impl.UserDAO;
 import eu.sedov.db.ConnectionManager;
 import eu.sedov.db.impl.ConnectionSQL;
 import eu.sedov.model.User;
-import eu.sedov.repository.UserRepository;
+import eu.sedov.repository.EntityRepositoryClass;
 import eu.sedov.repository.impl.UserRepositoryImpl;
 import eu.sedov.repository.mapper.UserResultSetMapper;
 import org.junit.jupiter.api.AfterAll;
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserResultSetMapperImplTest {
     private UserResultSetMapper mapper;
     private ConnectionManager manager;
+    private EntityDAO dao;
     private final List<User> users = new ArrayList<>(){{
         add(new User(1, "Nikita", 25, "Moscow"));
         add(new User(2, "Masha", 19, "Italy"));
@@ -54,7 +57,8 @@ class UserResultSetMapperImplTest {
                 mySQLcontainer.getPassword()
         );
         mapper = new UserResultSetMapperImpl();
-        UserRepository repository = new UserRepositoryImpl(mapper, manager);
+        dao = new UserDAO();
+        EntityRepositoryClass<User> repository = new UserRepositoryImpl(mapper, manager, dao);
 
         for(var user : users)
             repository.insert(user);
@@ -63,12 +67,7 @@ class UserResultSetMapperImplTest {
     @Test
     void map() {
         try (Connection conn = manager.getConnection()){
-            try(PreparedStatement statement = conn.prepareStatement(
-                """
-                      SELECT user.id, user.name, user.age, user.address
-                      FROM user;
-                   """
-                )
+            try(PreparedStatement statement = conn.prepareStatement(dao.getAll())
             ){
                 ResultSet resultSet = statement.executeQuery();
                 while(resultSet.next()){
