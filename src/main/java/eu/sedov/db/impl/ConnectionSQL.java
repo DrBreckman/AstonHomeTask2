@@ -16,7 +16,7 @@ public class ConnectionSQL implements ConnectionManager {
     private final String username;
     private final String password;
 
-    public ConnectionSQL() throws IOException{
+    public ConnectionSQL() throws IOException {
         Properties props = new Properties();
         try(InputStream in = Files.newInputStream(Paths.get("database.properties"))){
             props.load(in);

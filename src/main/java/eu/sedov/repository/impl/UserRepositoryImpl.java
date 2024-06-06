@@ -24,16 +24,15 @@ public class UserRepositoryImpl implements UserRepository {
 
     private void createTableIfNotExist(){
         try (Connection conn = this.manager.getConnection()) {
-            try (PreparedStatement statement = conn.prepareStatement(
+            try (PreparedStatement statement = conn.prepareStatement("""
+                    CREATE TABLE IF NOT EXISTS user (
+                    `id` INT NOT NULL AUTO_INCREMENT,
+                    `name` VARCHAR(45) NOT NULL,
+                    `age` INT NOT NULL,
+                    `address` VARCHAR(45) NOT NULL,
+                    PRIMARY KEY (`id`),
+                    UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
                 """
-                       CREATE table if not exists user (
-                        `id` INT NOT NULL AUTO_INCREMENT,
-                        `name` VARCHAR(45) NOT NULL,
-                        `age` VARCHAR(45) NOT NULL,
-                        `address` VARCHAR(45) NOT NULL,
-                        PRIMARY KEY (`id`),
-                        UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);
-                    """
                 )
             ){
                 statement.execute();
@@ -47,8 +46,7 @@ public class UserRepositoryImpl implements UserRepository {
     public List<User> getAll() {
         List<User> users = new ArrayList<>();
         try (Connection conn = manager.getConnection()){
-            try(PreparedStatement statement = conn.prepareStatement(
-            """
+            try(PreparedStatement statement = conn.prepareStatement("""
                   SELECT user.id, user.name, user.age, user.address
                   FROM user;
                """
@@ -67,10 +65,14 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User get(int id) {
-        final String sql = "SELECT user.id, user.name, user.age, user.address FROM user WHERE id=?";
         User user = null;
         try (Connection conn = manager.getConnection()){
-            try(PreparedStatement preparedStatement = conn.prepareStatement(sql)){
+            try(PreparedStatement preparedStatement = conn.prepareStatement("""
+                        SELECT user.id, user.name, user.age, user.address
+                        FROM user
+                        WHERE id = ?
+                    """)
+            ){
                 preparedStatement.setInt(1, id);
                 ResultSet resultSet = preparedStatement.executeQuery();
                 if(resultSet.next()){
@@ -85,9 +87,12 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public int delete(int id) {
-        final String sql = "DELETE FROM user WHERE id = ?";
         try (Connection conn = manager.getConnection()){
-            try(PreparedStatement preparedStatement = conn.prepareStatement(sql)){
+            try(PreparedStatement preparedStatement = conn.prepareStatement("""
+                        DELETE FROM user
+                        WHERE id = ?
+                    """)
+            ){
                 preparedStatement.setInt(1, id);
                 return  preparedStatement.executeUpdate();
             }
@@ -98,9 +103,13 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public int update(User user) {
-        final String sql = "UPDATE user SET name = ?, age = ?, address = ? WHERE id = ?";
         try (Connection conn = manager.getConnection()){
-            try(PreparedStatement preparedStatement = conn.prepareStatement(sql)){
+            try(PreparedStatement preparedStatement = conn.prepareStatement("""
+                        UPDATE user
+                        SET name = ?, age = ?, address = ?
+                        WHERE id = ?
+                    """)
+            ){
                 preparedStatement.setString(1, user.getName());
                 preparedStatement.setInt(2, user.getAge());
                 preparedStatement.setString(3, user.getAddress());
@@ -114,9 +123,12 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public int insert(User user) {
-        final String sql = "INSERT INTO user (name, age, address) Values (?, ?, ?)";
         try (Connection conn = manager.getConnection()){
-            try(PreparedStatement preparedStatement = conn.prepareStatement(sql)){
+            try(PreparedStatement preparedStatement = conn.prepareStatement("""
+                        INSERT INTO user (name, age, address)
+                        Values (?, ?, ?)
+                    """)
+            ){
                 preparedStatement.setString(1, user.getName());
                 preparedStatement.setInt(2, user.getAge());
                 preparedStatement.setString(3, user.getAddress());

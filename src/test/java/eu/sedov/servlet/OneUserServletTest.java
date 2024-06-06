@@ -1,6 +1,7 @@
 package eu.sedov.servlet;
 
 import eu.sedov.model.User;
+import eu.sedov.repository.mapper.impl.UserEnumMap;
 import eu.sedov.service.impl.UserServiceImpl;
 import eu.sedov.servlet.dto.InUserDTO;
 import eu.sedov.servlet.dto.OutUserDTO;
@@ -29,6 +30,8 @@ class OneUserServletTest {
     static UserServiceImpl service;
     @Mock
     static UserMapperDtoImpl mapper;
+    @Mock
+    private UserEnumMap userEnum;
 
     @Test
     void doGet() throws ServletException, IOException {

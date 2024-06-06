@@ -1,6 +1,7 @@
 package eu.sedov.servlet;
 
 import eu.sedov.model.User;
+import eu.sedov.repository.mapper.impl.UserEnumMap;
 import eu.sedov.service.impl.UserServiceImpl;
 import eu.sedov.servlet.dto.OutUserDTO;
 import eu.sedov.servlet.mapper.impl.UserMapperDtoImpl;
@@ -28,6 +29,8 @@ class DeleteUserServletTest {
     private UserServiceImpl service;
     @Mock
     private UserMapperDtoImpl mapper;
+    @Mock
+    private UserEnumMap userEnum;
 
     @Test
     void doPost() throws ServletException, IOException {

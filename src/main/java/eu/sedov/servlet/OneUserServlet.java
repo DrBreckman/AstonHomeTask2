@@ -1,6 +1,7 @@
 package eu.sedov.servlet;
 
 import eu.sedov.model.User;
+import eu.sedov.repository.mapper.impl.UserEnumMap;
 import eu.sedov.service.UserService;
 import eu.sedov.servlet.dto.InUserDTO;
 import eu.sedov.servlet.dto.OutUserDTO;
@@ -17,10 +18,11 @@ import java.io.IOException;
 public class OneUserServlet extends HttpServlet {
     private UserService service;
     private UserMapperDto mapper;
+    private UserEnumMap map;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        final User user = service.getById(Integer.parseInt(req.getParameter("id")));
+        final User user = service.getById(Integer.parseInt(req.getParameter(map.getMap().get(UserEnumMap.UserResultSetParams.ID))));
         final OutUserDTO dto = mapper.map(user);
 
         req.setAttribute("user", dto);
@@ -30,10 +32,10 @@ public class OneUserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         InUserDTO incomingDTO = new InUserDTO(
-                Integer.parseInt(req.getParameter("id")),
-                req.getParameter("name"),
-                Integer.parseInt(req.getParameter("age")),
-                req.getParameter("address"));
+                Integer.parseInt(req.getParameter(map.getMap().get(UserEnumMap.UserResultSetParams.ID))),
+                req.getParameter(map.getMap().get(UserEnumMap.UserResultSetParams.ID)),
+                Integer.parseInt(req.getParameter(map.getMap().get(UserEnumMap.UserResultSetParams.ID))),
+                req.getParameter(map.getMap().get(UserEnumMap.UserResultSetParams.ID)));
         User user = mapper.map(incomingDTO);
         service.insert(user);
         OutUserDTO outGoingDto = mapper.map(user);

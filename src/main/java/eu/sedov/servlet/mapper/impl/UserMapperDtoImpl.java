@@ -12,13 +12,15 @@ public class UserMapperDtoImpl implements UserMapperDto {
                 incomingDto.id(),
                 incomingDto.name(),
                 incomingDto.age(),
-                incomingDto.address());
+                incomingDto.address()
+        );
     }
 
     @Override
     public OutUserDTO map(User entity) {
         return new OutUserDTO(
                 entity.getName(),
-                entity.getAddress());
+                entity.getAddress()
+        );
     }
 }

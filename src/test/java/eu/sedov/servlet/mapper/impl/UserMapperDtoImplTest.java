@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserMapperDtoImplTest {
-
     @Mock
     private UserMapperDtoImpl mapper;
 
