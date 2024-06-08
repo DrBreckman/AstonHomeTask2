@@ -12,11 +12,7 @@ public class ReviewDAO implements EntityDAO {
             `description` varchar(45),
             `bookId` int,
             `userId` int,
-            PRIMARY KEY (`id`),
-            KEY `bookId_idx` (`bookId`),
-            KEY `userId_idx` (`userId`),
-            CONSTRAINT `bookId` FOREIGN KEY (`bookId`) REFERENCES `book` (`id`),
-            CONSTRAINT `userId` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) );
+            PRIMARY KEY (`id`));
         """;
     }
 

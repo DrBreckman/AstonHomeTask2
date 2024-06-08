@@ -17,15 +17,22 @@ class UserMapperDtoImplTest {
     private UserMapperDtoImpl mapper;
 
     @Test
-    void map(){
+    void map_to_object() {
         User user = new User(1, "Nikita", 25, "Belarus");
-        InUserDTO inDto = new InUserDTO(user.getId(), user.getName(), user.getAge(), user.getAddress());
-        OutUserDTO outDto = new OutUserDTO(user.getName(), user.getAddress());
+        InUserDTO inDto = new InUserDTO(1, "Nikita", 25, "Belarus");
 
         Mockito.when(mapper.map(inDto)).thenReturn(user);
+
+        assertEquals(new User(1, "Nikita", 25, "Belarus"), mapper.map(inDto));
+    }
+
+    @Test
+    void map_to_dto() {
+        User user = new User(1, "Nikita", 25, "Belarus");
+        OutUserDTO outDto = new OutUserDTO(user.getName(), user.getAddress());
+
         Mockito.when(mapper.map(user)).thenReturn(outDto);
 
-        assertEquals(user, mapper.map(new InUserDTO(1, "Nikita", 25, "Belarus")));
-        assertEquals(outDto, mapper.map(new User(1, "Nikita", 25, "Belarus")));
+        assertEquals(new OutUserDTO("Nikita", "Belarus"), mapper.map(user));
     }
 }

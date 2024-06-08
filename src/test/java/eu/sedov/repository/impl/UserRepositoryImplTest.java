@@ -7,7 +7,6 @@ import eu.sedov.dao.impl.UserDAO;
 import eu.sedov.db.ConnectionManager;
 import eu.sedov.db.impl.ConnectionSQL;
 import eu.sedov.model.User;
-import eu.sedov.repository.EntityRepositoryClass;
 import eu.sedov.repository.mapper.impl.UserResultSetMapperImpl;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.MySQLContainer;
@@ -15,7 +14,7 @@ import org.testcontainers.containers.MySQLContainer;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserRepositoryImplTest {
-    private EntityRepositoryClass<User> repository;
+    private UserRepositoryImpl repository;
 
     static MySQLContainer<?> mySQLcontainer = new MySQLContainer<>(
             "mysql:8.4.0-oracle"
@@ -33,12 +32,12 @@ class UserRepositoryImplTest {
 
     @BeforeEach
     void setUp() {
-        ConnectionManager connectionManager = new ConnectionSQL(
+        ConnectionManager manager = new ConnectionSQL(
                 mySQLcontainer.getJdbcUrl(),
                 mySQLcontainer.getUsername(),
                 mySQLcontainer.getPassword()
         );
-        repository = new UserRepositoryImpl(new UserResultSetMapperImpl(), connectionManager, new UserDAO());
+        repository = new UserRepositoryImpl(new UserResultSetMapperImpl(), manager, new UserDAO());
     }
 
     @Test
@@ -114,11 +113,11 @@ class UserRepositoryImplTest {
 
         User deletedUser = repository.getAll().get(2);
         int dbCapacity = repository.getAll().size();
-        int deletedUsers = repository.delete(-1);
-        assertEquals(0, deletedUsers);
+        int deletedLines = repository.delete(-1);
+        assertEquals(0, deletedLines);
 
-        deletedUsers = repository.delete(deletedUser.getId());
-        assertEquals(1, deletedUsers);
+        deletedLines = repository.delete(deletedUser.getId());
+        assertEquals(1, deletedLines);
 
         List<User> dbUsers = repository.getAll();
         assertEquals(dbCapacity - 1, dbUsers.size());
@@ -130,13 +129,3 @@ class UserRepositoryImplTest {
         assertNull(dbUser);
     }
 }
-
-
-
-
-
-
-
-
-
-

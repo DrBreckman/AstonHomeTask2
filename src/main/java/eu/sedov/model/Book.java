@@ -25,9 +25,27 @@ public class Book {
         return author;
     }
 
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
     public Book(Integer id, String name, String author) {
         this.id = id;
         this.name = name;
         this.author = author;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Book book))
+            return false;
+
+        if (!this.id.equals(book.id))
+            return false;
+
+        if (!this.name.equals(book.name))
+            return false;
+
+        return this.author.equals(book.author);
     }
 }

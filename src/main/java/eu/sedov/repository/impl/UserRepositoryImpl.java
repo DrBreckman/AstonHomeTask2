@@ -3,9 +3,6 @@ package eu.sedov.repository.impl;
 import eu.sedov.dao.EntityDAO;
 import eu.sedov.db.ConnectionManager;
 import eu.sedov.model.User;
-
-import eu.sedov.model.UserBook;
-import eu.sedov.model.UserReview;
 import eu.sedov.repository.EntityRepositoryClass;
 import eu.sedov.repository.mapper.EntityResultSetMapper;
 
@@ -21,20 +18,19 @@ public class UserRepositoryImpl extends EntityRepositoryClass<User> {
         super(mapper, manager, dao);
     }
 
-    public List<UserBook> getUsersBooks(){
-        List<UserBook> userBooks = new ArrayList<>();
+    public List<Integer> getUserBooks(int id){
+        List<Integer> userBooks = new ArrayList<>();
         try (Connection conn = manager.getConnection()){
             try(PreparedStatement statement = conn.prepareStatement("""
-                    SELECT ticket.idUser, ticket.idBook
+                    SELECT ticket.idBook
                     FROM ticket
+                    WHERE userId = ?
                 """)
             ){
+                statement.setInt(1, id);
                 ResultSet resultSet = statement.executeQuery();
                 while(resultSet.next()){
-                    userBooks.add(new UserBook(
-                            resultSet.getInt(1),
-                            resultSet.getInt(2)
-                    ));
+                    userBooks.add(resultSet.getInt(1));
                 }
             }
         } catch (SQLException | IOException e) {
@@ -43,21 +39,20 @@ public class UserRepositoryImpl extends EntityRepositoryClass<User> {
         return userBooks;
     }
 
-    public List<UserReview> getUsersReview(){
-        List<UserReview> userReviews = new ArrayList<>();
+    public List<Integer> getUserReview(int id){
+        List<Integer> userReviews = new ArrayList<>();
         try (Connection conn = manager.getConnection()){
             try(PreparedStatement statement = conn.prepareStatement("""
-                    SELECT user.id, review.id
+                    SELECT review.id
                     FROM review
                     INNER JOIN user ON review.userId = user.id
+                    WHERE user.id = ?
                 """)
             ){
+                statement.setInt(1, id);
                 ResultSet resultSet = statement.executeQuery();
                 while(resultSet.next()){
-                    userReviews.add(new UserReview(
-                            resultSet.getInt(1),
-                            resultSet.getInt(2)
-                    ));
+                    userReviews.add(resultSet.getInt(1));
                 }
             }
         } catch (SQLException | IOException e) {

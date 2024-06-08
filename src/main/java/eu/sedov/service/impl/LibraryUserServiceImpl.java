@@ -20,21 +20,15 @@ public class LibraryUserServiceImpl implements LibraryUserService {
             return null;
 
         List<Book> books = bookRepository.getAll();
-        List<Review> review = reviewRepository.getAll();
-        var userReviews = userRepository.getUsersReview().stream()
-                .filter(x -> x.userId().equals(user.getId()))
-                .map(UserReview::reviewId)
-                .toList();
-        user.setReviewList(review.stream()
-                .filter(x -> userReviews.contains(x.getId()))
+        List<Review> reviews = reviewRepository.getAll();
+        var userReviewsId = userRepository.getUserReview(user.getId());
+        user.setReviewList(reviews.stream()
+                .filter(review -> userReviewsId.contains(review.getId()))
                 .toList());
 
-        var userBooks = userRepository.getUsersBooks().stream()
-                .filter(x -> x.userId().equals(user.getId()))
-                .map(UserBook::bookId)
-                .toList();
+        var userBooksId = userRepository.getUserBooks(user.getId());
         user.setBookList(books.stream()
-                .filter(x -> userBooks.contains(x.getId()))
+                .filter(book -> userBooksId.contains(book.getId()))
                 .toList());
 
         user.getReviewList().forEach(x -> x.setUser(user));
